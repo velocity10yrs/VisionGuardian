@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual Environment
+.venv/
+venv/
+env/
+
+# VSCode
+.vscode/
+
+# macOS
+.DS_Store
+
+# Logs
+logs/*
+!logs/.gitkeep
+
+# Screenshots
+screenshots/*
+!screenshots/.gitkeep
+
+# Python cache
+.pytest_cache/
+
+# Model cache (按需)
+runs/
+
+# Environment variables
+.env
