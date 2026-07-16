@@ -1,0 +1,13 @@
+
+
+MODEL_PATH="models"
+
+SCREENSHOT_DIR="screenshots"
+
+CONF_THRESHOLD="0.25"
+
+CAMEREA_INDEX="0"
+
+ROI=""
+
+LOR_DIR="" 

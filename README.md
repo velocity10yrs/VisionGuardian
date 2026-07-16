@@ -1,5 +1,5 @@
 /***2026-07-15 10:29***/
-    PROJECT <Vision Guardian> Created:
+    PROJECT <Vision Guardian>(ver 0.1) Created:
     VisionGuard/
     │
     ├── main.py     #入口
@@ -15,3 +15,5 @@
     ├── requirements.txt
     ├── README.md
     └── .gitignore
+
+2026-07-16 10:23 配置了config.py, events.py, actions.py, detector.py, logger.py;
