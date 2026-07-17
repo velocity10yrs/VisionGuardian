@@ -1,13 +1,18 @@
 
 
-MODEL_PATH="models"
-
-SCREENSHOT_DIR="screenshots"
-
-CONF_THRESHOLD="0.25"
-
+# ======Num_of_camera======
 CAMEREA_INDEX="0"
 
-ROI=""
+#======yolo model======
+MODEL_PATH="models"
+#======credibility======
+CONF_THRESHOLD="0.25"
+#======ROI======
+ROI=(100,100,500,400)
 
-LOR_DIR="" 
+#======output======
+SCREENSHOT_DIR="screenshots"
+LOR_DIR="logs"
+
+#======display======
+WINDOW_NAME="VisionGuardian"

@@ -17,3 +17,4 @@
     └── .gitignore
 
 2026-07-16 10:23 配置了config.py, events.py, actions.py, detector.py, logger.py;
+2026-07-18 07:23 细化了config.py;
