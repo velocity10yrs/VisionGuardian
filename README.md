@@ -1,4 +1,4 @@
-/***2026-07-15 10:29***/
+/***2026-07-15 10:29***/  文件目录
     PROJECT <Vision Guardian>(ver 0.1) Created:
     VisionGuard/
     │
@@ -15,6 +15,24 @@
     ├── requirements.txt
     ├── README.md
     └── .gitignore
-
+/****2026-07-18 15:59****/ 系统架构图
+Camera
+   │
+   ▼
+Detector
+   │
+   ▼
+Event Engine
+   │
+   ▼
+Actions
+   │
+   ├── Screenshot
+   └── Logger
+   └── (Future) HTTP API
+   │
+   ▼
+Display
 2026-07-16 10:23 配置了config.py, events.py, actions.py, detector.py, logger.py;
 2026-07-18 07:23 细化了config.py;
+           16:03 README.md, 编写了main.py主流程; 
