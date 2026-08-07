@@ -1,8 +1,18 @@
-INTRUSION=False
+# ======event detection types========
 
-FALL=False
+# ver(2026-0807 13:52)
+INTRUSION = "INTRUSION"
+FALL ="FALL"
+SMOKE="SMOKE"
+FIRE ="FIRE"
 
-SMOKE=False
-
-FIRE=False
+# ver(2026-0807 13:45)
+#person in ROI
+event_INTRUSION=False
+#things fall in ROI
+event_FALL=False
+#smoking in ROI
+event_SMOKE=False
+#fire in ORI
+event_FIRE=False
 
