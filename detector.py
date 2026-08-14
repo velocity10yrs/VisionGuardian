@@ -3,29 +3,25 @@ from ultralytics import YOLO
 from logger import append_log
 from actions import generate_ssname
 from actions import triggered_warning
+import events
+import actions
+import config
+import datetime
 #-----------------------------------#
-ROI_LINE_X=540
-MIN_CONF=0.25
 TARGET_CLASS="person"
-LOG_FILE="logs/detector.log"
+ROI_LINE_X=config.ROI_LINE_X
+MIN_CONF=config.CONF_THRESHOLD
+LOG_FILE=config.LOG_DIR
+MODEL_PATH=config.MODEL_PATH
 res=None
-last_warning=None
 #-----------------------------------#
-class Detector:
-    def detect(self,frame):
-        model=YOLO("model/yolo11n.pt")
-        last_warning = False
-
-        while True:
-            #预测
-            results=model.predict(frame,conf=MIN_CONF,verbose=False)
-            res=results[0]
-            #ROI
-            cv2.line(frame,
-                    (ROI_LINE_X,0),(ROI_LINE_X,frame.shape[0]),
-                    (0,0,255),2)
-            #ROI判断
-            for box in res.boxes:
+def ROI(frame,res):
+    #roi划定
+    cv2.line(frame,
+            (ROI_LINE_X,0),(ROI_LINE_X,frame.shape[0]),
+            (0,0,255),2)
+    #intrusion判断
+    for box in res.boxes:
                 cls=int(box.cls)
                 name=res.names[cls] #fix
                 if(name!=TARGET_CLASS): continue
@@ -35,20 +31,52 @@ class Detector:
                 cv2.circle(frame,
                         (cen_x,cen_y),
                         5,(255,0,0),-1)
-                #事件:INTRUSION警报
-                warning = (cen_x<=ROI_LINE_X)
-                    #last_warning = False #opt
-                #动作:warning驱动
-                if warning and not last_warning:
-                    last_warning=warning #只报警新目标
-                    cv2.rectangle(frame,
-                                (x1,y1),(x2,y2),
-                                (255,0,0),2)
-                    cv2.putText(frame,"WARNING",
-                                (30,50),cv2.FONT_HERSHEY_SIMPLEX,
-                                1,(0,0,255),3)
-                    triggered_warning()
-                    ss_name=generate_ssname()
-                    #动作:logging+sshot
-                    append_log(ss_name)
-                last_warning=warning; #fix:一旦退出再进入需要重新报警 
+    return (cen_x,cen_y),(x1,y1,x2,y2)
+def is_intruded(cen_x,ROI_LINE_X):
+    return cen_x<=ROI_LINE_X
+def triggered_warning():#解耦
+    print(f"[{datetime.now():%H:%M:%S}] Warning: person entered ROI.") 
+def generate_ssname():#解耦
+    return datetime.now().strftime("%Y%m%d_%H%M%S")+".jpg" 
+def action(warning,frame,roi):
+    if warning and not last_warning:
+                last_warning=warning #只报警新目标
+                x1,y1,x2,y2=roi
+                cv2.rectangle(frame,
+                            (x1,y1),(x2,y2),
+                            (255,0,0),2)
+                cv2.putText(frame,"WARNING",
+                            (30,50),cv2.FONT_HERSHEY_SIMPLEX,
+                            1,(0,0,255),3)
+                triggered_warning()
+                ss_name=generate_ssname()
+                #动作:logging+sshot
+                append_log(ss_name)
+#-----------------------------------#
+class Detector:
+    def detect(self,frame):
+        person_detected = False
+        model=YOLO(MODEL_PATH)
+        
+        #model
+        results=model.predict(frame,conf=MIN_CONF,verbose=False)
+        res=results[0]
+        for box in res.boxes:
+              cls=int(box.cls)
+              name=res.names[cls]
+              if(name==TARGET_CLASS):
+                    person_detected=True
+        return person_detected
+        
+        ##ROI+intrusion
+        #res=ROI(frame,res)
+        #cen_x,cen_y=res[0]
+        #x1,y1,x2,y2=res[1]
+
+        ##triggers
+        #last_warning = False
+        #warning=is_intruded(cen_x,ROI_LINE_X)
+                
+        ##actions
+        #action(warning,frame,res[1])
+        #last_warning=warning; 

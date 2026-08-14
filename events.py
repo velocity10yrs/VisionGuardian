@@ -9,6 +9,7 @@ FIRE ="FIRE"
 # ver(2026-0807 13:45)
 #person in ROI
 event_INTRUSION=False
+person_detected=False
 #things fall in ROI
 event_FALL=False
 #smoking in ROI
