@@ -54,29 +54,21 @@ def action(warning,frame,roi):
                 append_log(ss_name)
 #-----------------------------------#
 class Detector:
+
+    def __init__(self): #init+self
+        #model loading
+        self.model=YOLO(MODEL_PATH) 
+
     def detect(self,frame):
-        person_detected = False
-        model=YOLO(MODEL_PATH)
-        
-        #model
-        results=model.predict(frame,conf=MIN_CONF,verbose=False)
+        detections = []
+    
+        results=self.model.predict(frame,conf=MIN_CONF,verbose=False)
         res=results[0]
         for box in res.boxes:
               cls=int(box.cls)
               name=res.names[cls]
               if(name==TARGET_CLASS):
-                    person_detected=True
-        return person_detected
-        
-        ##ROI+intrusion
-        #res=ROI(frame,res)
-        #cen_x,cen_y=res[0]
-        #x1,y1,x2,y2=res[1]
-
-        ##triggers
-        #last_warning = False
-        #warning=is_intruded(cen_x,ROI_LINE_X)
-                
-        ##actions
-        #action(warning,frame,res[1])
-        #last_warning=warning; 
+                    confidence=float(box.conf)
+                    xyxy=tuple(map(int,box.xyxy[0])) #map返回的是迭代器
+                    detections.append( (confidence,xyxy) )
+        return detections
