@@ -1,19 +1,22 @@
-# ======event detection types========
+#-----------------------------------#
+import config
+#-----------------------------------#
+ROI_LINE_X=config.ROI_LINE_X
+    #MIN_CONF=config.CONF_THRESHOLD
+#-----------------------------------#
 
-# ver(2026-0807 13:52)
-INTRUSION = "INTRUSION"
-FALL ="FALL"
-SMOKE="SMOKE"
-FIRE ="FIRE"
+class EventEngine:
 
-# ver(2026-0807 13:45)
-#person in ROI
-event_INTRUSION=False
-person_detected=False
-#things fall in ROI
-event_FALL=False
-#smoking in ROI
-event_SMOKE=False
-#fire in ORI
-event_FIRE=False
+    #def __init__(self):
+    #    return self
+        
+    def is_intruded(self,detections):
+        events = []
 
+        for confidence,bbox in detections:
+            x1,y1,x2,y2=bbox
+            target_center_x=(x1+x2)//2
+            if target_center_x<=ROI_LINE_X:
+                events.append("intrusion")
+
+        return events

@@ -1,5 +1,6 @@
 import cv2
 from detector import Detector
+from events import EventEngine
 from logger import append_log
 from actions import save_screenshot
 
@@ -32,7 +33,7 @@ def run_pipeline():
             detections = detector.detect(frame) #detect()待实现
 
             #step-3: event triggered
-            events = event_engine.detect(detections)#event_engine待实现
+            events = event_engine.is_intruded(detections)#event_engine待实现
 
             #step-4: taking action
             action_handler.handle_event(events) #action_handler待实现
@@ -53,9 +54,9 @@ def run_pipeline():
         print("all windows are closed.")
 
 #以下是构建pipeline时尚未搭建的stub:
-class EventEngine:
-    def detect(self,detections):
-        return []
+#class EventEngine:
+#    def detect(self,detections):
+#        return []
 class ActionHandler:
     def handle_event(self,events):
         return 
