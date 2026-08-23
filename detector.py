@@ -70,5 +70,5 @@ class Detector:
               if(name==TARGET_CLASS):
                     confidence=float(box.conf)
                     xyxy=tuple(map(int,box.xyxy[0])) #map返回的是迭代器
-                    detections.append( (confidence,xyxy,frame) )
+                    detections.append( (confidence,xyxy) )
         return detections
