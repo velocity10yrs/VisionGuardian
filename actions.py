@@ -1,26 +1,41 @@
+import cv2
+import os
 from datetime import datetime
+import config
 
 class ActionHandler:
 
-    def handle_event(self,events,frame):
-        for e in events: # events=[] f
-            if e.event_type == "intrusion":
-                self.handle_intrusion(e,frame)
-
-    def warning(self):#解耦
-        print(
-            f"[{datetime.now():%H:%M:%S}]"
-            f"Warning: person intruded ROI."
-        ) 
-
-    def logging(self,event):
-        return 
+    def get_timestamp(self):
+        timestamp = datetime.now()
+        return timestamp
     
-    def screenshot(self,event,frame):
-        return
+    def generate_warning(self):#解耦
+        now = self.get_timestamp()
+        warning=f"Warning: [{now:%H:%M:%S}] person intruded ROI."
+        return warning
+
+    def append_log(self,event,warning,ssname):
+        with open(config.LOG_FILE,'a',encoding="utf-8") as f:
+            f.write(warning+'\n')
+            f.write("screenshot saved as: "+ssname+'\n')
+            f.write('-'*40+'\n')#隔行记号
+    
+    def generate_screenshot(self,event,frame):
+        now = self.get_timestamp()
+        ssname = event.event_type+now.strftime("%Y%m%d_%H%M%S")+".jpg"
+        filepath = os.path.join(config.SCREENSHOT_DIR,ssname)
+        is_saved = cv2.imwrite(filepath,frame)
+        if is_saved:
+            return ssname
+        else:
+            return "screeshot failure"
 
     def handle_intrusion(self,event,frame):
-        self.warning(event)
-        self.logging(event)
-        self.screenshot(event,frame)
+        warning = self.generate_warning()
+        ssname = self.generate_screenshot(event,frame)
+        self.append_log(event,warning,ssname)
 
+    def handle_event(self,events,frame):
+        for e in events: 
+            if e.event_type == "intrusion":
+                self.handle_intrusion(e,frame)

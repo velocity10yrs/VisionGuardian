@@ -14,7 +14,8 @@ ROI_LINE_X=540
 
 #======output======
 SCREENSHOT_DIR="screenshots"
-LOG_DIR="logs"
+LOG_DIR="logs/"
+LOG_FILE="event.log"
 
 #======display======
 WINDOW_NAME="VisionGuardian"
