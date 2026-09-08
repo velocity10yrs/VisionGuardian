@@ -1,8 +1,9 @@
 import cv2
 from detector import Detector
 from events import EventEngine
-from logger import append_log
-from actions import save_screenshot
+from actions import ActionHandler
+#from logger import append_log
+#from actions import save_screenshot
 
 def main():
     print("starting the system:")
@@ -30,13 +31,13 @@ def run_pipeline():
             #print("camera data flow incoming...")#fixed:刷屏
 
             #step-2: detecting
-            detections = detector.detect(frame) #detect()待实现
+            detections = detector.detect(frame) #detect()
 
             #step-3: event triggered
-            events = event_engine.is_intruded(detections)#event_engine待实现
+            events = event_engine.verify(detections)#event_engine
 
             #step-4: taking action
-            action_handler.handle_event(events) #action_handler待实现
+            action_handler.handle_event(events,frame) #action_handler
 
             #step-5: quit camera
             #print("press 'q' to quit at anytime")#fixed:刷屏
@@ -57,9 +58,9 @@ def run_pipeline():
 #class EventEngine:
 #    def detect(self,detections):
 #        return []
-class ActionHandler:
-    def handle_event(self,events):
-        return 
+##class ActionHandler:
+##    def handle_event(self,events):
+##        return 
     
 #start the system:
 if __name__ == "__main__":
