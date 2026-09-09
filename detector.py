@@ -9,7 +9,7 @@ import config
 import datetime
 #-----------------------------------#
 TARGET_CLASS="person"
-ROI_LINE_X=config.ROI_LINE_X
+roi=config.ROI
 MIN_CONF=config.CONF_THRESHOLD
 LOG_FILE=config.LOG_DIR
 MODEL_PATH=config.MODEL_PATH
@@ -63,9 +63,10 @@ class Detector:
     def detect(self,frame):
         detections = []
         #draw ROI
-        cv2.line(frame,                     
-             (ROI_LINE_X,0),
-             (ROI_LINE_X,frame.shape[0]), #bug:frame.shape[1]
+        rx1,ry1,rx2,ry2=roi
+        cv2.rectangle(frame,                     
+             (rx1,ry1),
+             (rx2,ry2), 
              (0,0,255),
              2)
     
@@ -86,5 +87,5 @@ class Detector:
                     cv2.rectangle(frame,(x1,y1),(x2,y2),(0,255,0),2)
                     cv2.putText(frame,name,(x1,y1-10),cv2.FONT_HERSHEY_SIMPLEX,0.8,(0,255,0),2)
                     #detections append
-                    detections.append( (confidence,xyxy) )
+                    detections.append( (confidence,xyxy,frame) )
         return detections

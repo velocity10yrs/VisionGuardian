@@ -37,7 +37,7 @@ def run_pipeline():
             events = event_engine.verify(detections)#event_engine
 
             #step-4: taking action
-            action_handler.handle_event(events,frame) #action_handler
+            action_handler.handle_event(events) #action_handler
 
             #step-5: quit camera
             #print("press 'q' to quit at anytime")#fixed:刷屏

@@ -9,8 +9,9 @@ MODEL_PATH="models/yolo11n.pt"
 CONF_THRESHOLD=0.25
 
 #======ROI======
-ROI=(100,100,500,400)
-ROI_LINE_X=540
+ROI=(100,100,200,200)
+ROI_LINE_X=100
+ROI_LINE_Y=100
 
 #======output======
 SCREENSHOT_DIR="screenshots"
