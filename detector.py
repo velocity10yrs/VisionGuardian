@@ -14,46 +14,23 @@ MIN_CONF=config.CONF_THRESHOLD
 LOG_FILE=config.LOG_DIR
 MODEL_PATH=config.MODEL_PATH
 res=None
-#-----------------------------------#
-# def ROI(frame,res):
-#     #roi划定
-#     cv2.line(frame,
-#             (ROI_LINE_X,0),(ROI_LINE_X,frame.shape[0]),
-#             (0,0,255),2)
-#     #intrusion判断
-#     for box in res.boxes:
-#                 cls=int(box.cls)
-#                 name=res.names[cls] #fix
-#                 if(name!=TARGET_CLASS): continue
-#                 #
-#                 x1,y1,x2,y2=map(int,box.xyxy[0])
-#                 cen_x=(x1+x2)//2;cen_y=(y1+y2)//2
-#                 cv2.circle(frame,
-#                         (cen_x,cen_y),
-#                         5,(255,0,0),-1)
-#     return (cen_x,cen_y),(x1,y1,x2,y2)
-##def is_intruded(cen_x,ROI_LINE_X):
-##    return cen_x<=ROI_LINE_X
-##def triggered_warning():#解耦
-##    print(f"[{datetime.now():%H:%M:%S}] Warning: person entered ROI.") 
-##def generate_ssname():#解耦
-##    return datetime.now().strftime("%Y%m%d_%H%M%S")+".jpg" 
-#-----------------------------------#
-# def action(warning,frame,roi):
-#     if warning and not last_warning:
-#                 last_warning=warning #只报警新目标
-#                 x1,y1,x2,y2=roi
-#                 cv2.rectangle(frame,
-#                             (x1,y1),(x2,y2),
-#                             (255,0,0),2)
-#                 cv2.putText(frame,"WARNING",
-#                             (30,50),cv2.FONT_HERSHEY_SIMPLEX,
-#                             1,(0,0,255),3)
-#                 triggered_warning()
-#                 ss_name=generate_ssname()
-#                 #动作:logging+sshot
-#                 append_log(ss_name)
-#-----------------------------------#
+
+#-----------------------------------# 一帧中的一个检测结果
+class Detection:
+    def __init__(self,bbox=(0,0,0,0),conf=0.0):
+        self.bbox=bbox
+        self.confidence=conf
+
+#-----------------------------------# 系统持续关注的一个现实世界对象
+class Target:
+    def __init__(self,bbox=(0,0,0,0),conf=0.0,last_seen=0,state=""):
+        self.id=0
+        self.bbox=bbox
+        self.confidence=conf
+        self.last_seen=last_seen
+        self.state=state
+
+#-----------------------------------# 检测器
 class Detector:
 
     def __init__(self): #init+self
@@ -66,7 +43,7 @@ class Detector:
         rx1,ry1,rx2,ry2=roi
         cv2.rectangle(frame,                     
              (rx1,ry1),
-             (rx2,ry2), 
+             (rx2,ry2),
              (0,0,255),
              2)
     
@@ -87,5 +64,7 @@ class Detector:
                     cv2.rectangle(frame,(x1,y1),(x2,y2),(0,255,0),2)
                     cv2.putText(frame,name,(x1,y1-10),cv2.FONT_HERSHEY_SIMPLEX,0.8,(0,255,0),2)
                     #detections append
-                    detections.append( (confidence,xyxy,frame) )
+                    new_dect = Detection(xyxy,confidence)
+                    #detections.append( (confidence,xyxy,frame) )
+                    detections.append(new_dect)
         return detections
