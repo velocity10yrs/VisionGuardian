@@ -20,3 +20,6 @@ LOG_FILE="event.log"
 
 #======display======
 WINDOW_NAME="VisionGuardian"
+
+#======target======
+PERMITTED_RANGE=100
