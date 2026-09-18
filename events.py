@@ -14,7 +14,7 @@ class Event:
         self.confidence=confidence
         self.bbox=bbox
         self.timestamp=timestamp
-        self.frame=frame
+        #self.frame=frame
 #-----------------------------------#
 class EventEngine:
     def __init__(self):
@@ -26,10 +26,12 @@ class EventEngine:
         
         return (x1<=rx2 & y1<=ry2)
 
-    def verify(self,detections):
+    def verify(self,targets):
         events = []
 
-        for confidence,bbox,frame in detections:
+        for tar in targets:
+            bbox=tar.bbox
+            confidence=tar.confidence
 
             if self.is_in_ROI(bbox):
 
@@ -40,7 +42,7 @@ class EventEngine:
                         confidence=confidence,
                         bbox=bbox,
                         timestamp=cur,
-                        frame=frame
+                        #frame=frame
                     )
 
                     events.append(e)
