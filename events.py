@@ -1,5 +1,4 @@
 #-----------------------------------#
-import cv2
 import config
 from datetime import datetime
 #-----------------------------------#
@@ -9,12 +8,12 @@ roi=config.ROI
 
 #-----------------------------------#
 class Event:
-    def __init__(self,event_type,confidence,bbox,timestamp,frame):
+    def __init__(self,event_type,confidence,bbox,timestamp,frame=None):
         self.event_type=event_type
         self.confidence=confidence
         self.bbox=bbox
         self.timestamp=timestamp
-        #self.frame=frame
+        self.frame=frame
 #-----------------------------------#
 class EventEngine:
     def __init__(self):
@@ -24,16 +23,21 @@ class EventEngine:
         rx1,ry1,rx2,ry2=roi #ROI
         x1,y1,x2,y2=bbox #target
         
-        return (x1<=rx2 & y1<=ry2)
+        return (x1<=rx2 and x2>=rx1 and y1<=ry2 and y2>=ry1)
 
-    def verify(self,targets):
+    def verify(self,targets,frame=None):
         events = []
+        has_intrusion=False
 
         for tar in targets:
+            if tar.state=="EXPIRED":
+                continue
+
             bbox=tar.bbox
             confidence=tar.confidence
 
             if self.is_in_ROI(bbox):
+                has_intrusion=True
 
                 if self.is_intruded is False:
                     cur=datetime.now()#f"{datetime.now():%H:%M:%S}"
@@ -42,13 +46,11 @@ class EventEngine:
                         confidence=confidence,
                         bbox=bbox,
                         timestamp=cur,
-                        #frame=frame
+                        frame=frame
                     )
 
                     events.append(e)
                     #传帧
-                self.is_intruded=True
-            else:
-                self.is_intruded=False
+        self.is_intruded=has_intrusion
 
         return events

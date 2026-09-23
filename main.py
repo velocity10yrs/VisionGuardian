@@ -36,7 +36,7 @@ def run_pipeline():
             targets = tracker.tracking(detections) #track()
 
             #step-3: event triggered
-            events = event_engine.verify(targets)#event_engine
+            events = event_engine.verify(targets,frame)#event_engine
 
             #step-4: taking action
             action_handler.handle_event(events) #action_handler
