@@ -49,7 +49,7 @@ class Tracker:
         target.bbox=tar.bbox
         target.confidence=tar.confidence
         target.last_seen=now
-        target.state=STATE_ACTIVE
+        target.state=STATE_ACTIVE         #新发现时=active
 
     def check(self,tar,now=None): #int
         if now is None:
@@ -62,34 +62,38 @@ class Tracker:
                 continue
             distsq = self.cal_dist(tar,exist_tar)
             if(distsq<closest_distsq): #update closest
-                closest_tar=index
+                closest_tar=index                       #无论是新发现，还是STATE_MISSING，都从这里验证是否为已有target
                 closest_distsq=distsq
-        if(closest_distsq<=config.PERMITTED_RANGE_SQRT):
+        if(closest_distsq<=config.PERMITTED_RANGE_SQRT): 
             self.update_target(self.target_list[closest_tar],tar,now)
             return closest_tar
         #new target    
         else:
             self.add(tar,now)
             return len(self.target_list)-1
+        
+    def target_lost_over_time(self,now,target,active_targets):
+            missing_time=(now-target.last_seen).total_seconds()   #计算target消失时间
 
+            if missing_time>=config.TARGET_EXPIRE_TIMEOUT_SEC: #不会加入target_list[]
+                target.state=STATE_EXPIRED
+                return
+
+            if missing_time>=config.TARGET_MISSING_TIMEOUT_SEC: #状态变更
+                target.state=STATE_MISSING
+
+            active_targets.append(target)
+    
     def refresh_lifecycle(self,matched_indexes,now): #void
         active_targets=[]
 
         for index,target in enumerate(self.target_list):
+            
             if index in matched_indexes:
                 active_targets.append(target)
                 continue
-
-            missing_time=(now-target.last_seen).total_seconds()
-
-            if missing_time>=config.TARGET_EXPIRE_TIMEOUT_SEC:
-                target.state=STATE_EXPIRED
-                continue
-
-            if missing_time>=config.TARGET_MISSING_TIMEOUT_SEC:
-                target.state=STATE_MISSING
-
-            active_targets.append(target)
+            
+            self.target_lost_over_time(now,target,active_targets)
 
         self.target_list=active_targets
 
