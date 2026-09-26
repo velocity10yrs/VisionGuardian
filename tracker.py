@@ -3,6 +3,7 @@
 """
 import config
 import math
+from collections import deque
 from datetime import datetime 
 #-----------------------------------# 
 
@@ -18,6 +19,23 @@ class Target:
         self.confidence=confidence
         self.last_seen=last_seen
         self.state=state
+        
+        self.center_history=deque(maxlen=config.JITTER_HISTORY_SIZE)
+        self.center_history.append(self.bbox_center(bbox))
+
+    @staticmethod
+    def bbox_center(bbox):
+        x1,y1,x2,y2=bbox
+        return ((x1+x2)/2,(y1+y2)/2)
+
+    def add_center(self,bbox):
+        self.center_history.append(self.bbox_center(bbox))
+
+    def averaged_center(self):
+        count=len(self.center_history)
+        x_sum=sum(center[0] for center in self.center_history)
+        y_sum=sum(center[1] for center in self.center_history)
+        return (x_sum/count,y_sum/count)
 #-----------------------------------# 管理者
 class Tracker:
     def __init__(self):
@@ -36,17 +54,24 @@ class Tracker:
         self.target_list.append(new_target)
 
     def cal_dist(self,new_tar,last_tar): #int
-        last_y = (last_tar.bbox[1]+last_tar.bbox[3])//2
-        last_x = (last_tar.bbox[0]+last_tar.bbox[2])//2
-
-        cur_y  = (new_tar.bbox[1]+new_tar.bbox[3])//2
-        cur_x  = (new_tar.bbox[0]+new_tar.bbox[2])//2
+        last_x,last_y=last_tar.averaged_center()
+        cur_x,cur_y=Target.bbox_center(new_tar.bbox)
 
         dist_sqrt = math.pow(cur_y-last_y,2)+math.pow(cur_x-last_x,2)
         return dist_sqrt
 
     def update_target(self,target,tar,now): #void
-        target.bbox=tar.bbox
+        target.add_center(tar.bbox)
+        avg_x,avg_y=target.averaged_center()
+        x1,y1,x2,y2=tar.bbox
+        width=x2-x1
+        height=y2-y1
+        target.bbox=(
+            int(round(avg_x-width/2)),
+            int(round(avg_y-height/2)),
+            int(round(avg_x+width/2)),
+            int(round(avg_y+height/2))
+        )
         target.confidence=tar.confidence
         target.last_seen=now
         target.state=STATE_ACTIVE         #新发现时=active
