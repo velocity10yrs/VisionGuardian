@@ -23,8 +23,14 @@ LOG_FILE="event.log"
 #======display======
 WINDOW_NAME="VisionGuardian"
 
+#======detection======
+DETECTION_INTERVAL=3
+
 #======target======
 PERMITTED_RANGE_SQRT=100
 TARGET_MISSING_TIMEOUT_SEC=1.0
 TARGET_EXPIRE_TIMEOUT_SEC=3.0
 JITTER_HISTORY_SIZE=5
+
+#======event======
+COOL_DOWN=10

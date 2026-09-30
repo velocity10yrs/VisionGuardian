@@ -5,7 +5,7 @@ from datetime import datetime
 ROI_LINE_X=config.ROI_LINE_X
 ROI_LINE_Y=config.ROI_LINE_Y
 roi=config.ROI
-
+cooldown=config.COOL_DOWN
 #-----------------------------------#
 class Event:
     def __init__(self,event_type,confidence,bbox,timestamp,frame=None):
@@ -17,6 +17,8 @@ class Event:
 #-----------------------------------#
 class EventEngine:
     def __init__(self):
+        #self.cooldown=config.COOL_DOWN #COOL-DOWN
+        self.last_activated=None           #COOL-DOWN,timedelta格式以none初始化,不是毫秒
         self.atleast_one_intruder=False ### 记录全局的intrusion pivot
     
     def is_in_ROI(self,bbox): ##bool
@@ -30,7 +32,6 @@ class EventEngine:
     
     def cal_overlap_rate(self,bbox): ##float
         ret = 0.0
-
         rx_left,ry_high,rx_right,ry_low=roi #ROI
         x_left,y_high,x_right,y_low=bbox    #bbox
 
@@ -83,8 +84,10 @@ class EventEngine:
                 if overlap_rate >= config.ENTER_THRESHOLD: ##超过enter阈值
                     newly_intruded = True
 
-                    if self.atleast_one_intruder is False:###全局状态从无到有>>触发 #这个条件判断可以省略
-                        cur=datetime.now()#f"{datetime.now():%H:%M:%S}"
+                    #if self.atleast_one_intruder is False:###全局状态从无到有>>触发 #这个条件判断可以省略
+                    cur=datetime.now()#f"{datetime.now():%H:%M:%S}"
+                    if self.last_activated is None or (cur-self.last_activated).total_seconds()>=cooldown:  #COOL-DOWN
+                        self.last_activated = cur           #COOL-DOWN
                         e = Event(
                             event_type="intrusion",
                             confidence=confidence,

@@ -66,12 +66,12 @@ class Tracker:
         x1,y1,x2,y2=tar.bbox
         width=x2-x1
         height=y2-y1
-        target.bbox=(
-            int(round(avg_x-width/2)),
-            int(round(avg_y-height/2)),
-            int(round(avg_x+width/2)),
-            int(round(avg_y+height/2))
-        )
+        # target.bbox=(
+        #     int(round(avg_x-width/2)),
+        #     int(round(avg_y-height/2)),
+        #     int(round(avg_x+width/2)),
+        #     int(round(avg_y+height/2))
+        # )
         target.confidence=tar.confidence
         target.last_seen=now
         target.state=STATE_ACTIVE         #新发现时=active

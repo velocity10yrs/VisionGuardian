@@ -3,6 +3,7 @@ from detector import Detector
 from events import EventEngine
 from actions import ActionHandler
 from tracker import Tracker
+import config
 
 def main():
     print("starting the system:")
@@ -23,23 +24,26 @@ def run_pipeline():
         event_engine = EventEngine() 
         action_handler = ActionHandler() 
 
+        frame_count = 0                                       ###SKIP_FRAMES
         while True:
             ret,frame = camera.read()
             if not ret:
                 print("camera data reading failed.")
                 return
+            frame_count += 1                                  ###SKIP_FRAMES
 
             #step-2: detecting
-            detections = detector.detect(frame) #detect()
+            if((frame_count-1)%config.DETECTION_INTERVAL==0): ###SKIP_FRAMES,每隔3帧检测一次
+                detections = detector.detect(frame) #detect()
 
             #step-new: target tracing
-            targets = tracker.tracking(detections) #track()
+                targets = tracker.tracking(detections) #track()
 
             #step-3: event triggered
-            events = event_engine.verify(targets,frame)#event_engine
+                events = event_engine.verify(targets,frame)#event_engine
 
             #step-4: taking action
-            action_handler.handle_event(events) #action_handler
+                action_handler.handle_event(events) #action_handler
 
             #step-5: quit camera
             cv2.imshow("camera_1",frame)
