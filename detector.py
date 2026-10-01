@@ -24,13 +24,13 @@ class Detector:
     def detect(self,frame):
         #self.count_of_frames += 1 ###SKIP_FRAMES
         detections = []
-        #draw ROI
-        rx1,ry1,rx2,ry2=roi
-        cv2.rectangle(frame,                     
-             (rx1,ry1),
-             (rx2,ry2),
-             (0,0,255),
-             2)
+        # #draw ROI
+        # rx1,ry1,rx2,ry2=roi
+        # cv2.rectangle(frame,                     
+        #      (rx1,ry1),
+        #      (rx2,ry2),
+        #      (0,0,255),
+        #      2)
 
         #if((self.count_of_frames-1)%interval==0): ###SKIP_FRAMES,每隔3帧检测一次
         results=self.model.predict(frame,conf=MIN_CONF,verbose=False)
@@ -43,10 +43,10 @@ class Detector:
                     confidence=float(box.conf)
                     xyxy=tuple(map(int,box.xyxy[0])) 
 
-                    #draw target
-                    x1,y1,x2,y2=xyxy
-                    cv2.rectangle(frame,(x1,y1),(x2,y2),(0,255,0),2)
-                    cv2.putText(frame,name,(x1,y1-10),cv2.FONT_HERSHEY_SIMPLEX,0.8,(0,255,0),2)
+                    # #draw target
+                    # x1,y1,x2,y2=xyxy
+                    # cv2.rectangle(frame,(x1,y1),(x2,y2),(0,255,0),2)
+                    # cv2.putText(frame,name,(x1,y1-10),cv2.FONT_HERSHEY_SIMPLEX,0.8,(0,255,0),2)
 
                     new_dect = Detection(xyxy,confidence)
                     detections.append(new_dect)

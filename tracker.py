@@ -66,12 +66,12 @@ class Tracker:
         x1,y1,x2,y2=tar.bbox
         width=x2-x1
         height=y2-y1
-        # target.bbox=(
-        #     int(round(avg_x-width/2)),
-        #     int(round(avg_y-height/2)),
-        #     int(round(avg_x+width/2)),
-        #     int(round(avg_y+height/2))
-        # )
+        target.bbox=(
+            int(round(avg_x-width/2)),
+            int(round(avg_y-height/2)),
+            int(round(avg_x+width/2)),
+            int(round(avg_y+height/2))
+        )
         target.confidence=tar.confidence
         target.last_seen=now
         target.state=STATE_ACTIVE         #新发现时=active
@@ -89,7 +89,7 @@ class Tracker:
             if(distsq<closest_distsq): #update closest
                 closest_tar=index                       #无论是新发现，还是STATE_MISSING，都从这里验证是否为已有target
                 closest_distsq=distsq
-        if(closest_distsq<=config.PERMITTED_RANGE_SQRT): 
+        if(closest_distsq<=config.PERMITTED_RANGE**2):  #fixed
             self.update_target(self.target_list[closest_tar],tar,now)
             return closest_tar
         #new target    

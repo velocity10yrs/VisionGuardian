@@ -1,4 +1,5 @@
 import cv2
+from visualizer import Visualizer
 from detector import Detector
 from events import EventEngine
 from actions import ActionHandler
@@ -23,13 +24,18 @@ def run_pipeline():
         tracker = Tracker()
         event_engine = EventEngine() 
         action_handler = ActionHandler() 
+        visualizer = Visualizer()
 
         frame_count = 0                                       ###SKIP_FRAMES
+        targets = []
         while True:
             ret,frame = camera.read()
             if not ret:
                 print("camera data reading failed.")
                 return
+            #step : visualization
+            visualizer.visualize_roi(frame,config.ROI)
+
             frame_count += 1                                  ###SKIP_FRAMES
 
             #step-2: detecting
@@ -45,6 +51,9 @@ def run_pipeline():
             #step-4: taking action
                 action_handler.handle_event(events) #action_handler
 
+            #step : visualization
+            visualizer.visualize_tar(frame,targets)
+            
             #step-5: quit camera
             cv2.imshow("camera_1",frame)
             if(cv2.waitKey(1)&0xff==ord('q')):
