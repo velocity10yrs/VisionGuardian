@@ -4,6 +4,8 @@ AI Event-driven Video Monitoring System
 
 VisionGuardian is a modular, local-first video monitoring system built with Python, OpenCV and YOLO.
 
+Documentation: [系统规格书 / 功能规格书](docs/specification.md)
+
 v0.1 focuses on establishing the fundamental pipeline from camera input to AI detection, event generation and automated response.
 
 Overview
