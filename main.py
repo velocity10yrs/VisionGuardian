@@ -40,16 +40,16 @@ def run_pipeline():
 
             #step-2: detecting
             if((frame_count-1)%config.DETECTION_INTERVAL==0): ###SKIP_FRAMES,每隔3帧检测一次
-                detections = detector.detect(frame) #detect()
+                detections = detector.detect(frame)
 
             #step-new: target tracing
-                targets = tracker.tracking(detections) #track()
+                targets = tracker.tracking(detections)
 
             #step-3: event triggered
-                events = event_engine.verify(targets,frame)#event_engine
+                events = event_engine.verify(targets,frame)
 
             #step-4: taking action
-                action_handler.handle_event(events) #action_handler
+                action_handler.handle_event(events)
 
             #step : visualization
             visualizer.visualize_tar(frame,targets)

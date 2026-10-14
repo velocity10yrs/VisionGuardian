@@ -19,7 +19,7 @@ class ActionHandler:
         with open(config.LOG_DIR+config.LOG_FILE,'a',encoding="utf-8") as f:
             f.write(warning+'\n')
             f.write("screenshot saved as: "+ssname+'\n')
-            f.write('-'*40+'\n')#隔行记号
+            f.write('-'*40+'\n') #隔行记号
     
     def generate_screenshot(self,event,frame):#ss
         now = self.get_timestamp()
@@ -39,5 +39,4 @@ class ActionHandler:
     def handle_event(self,events):
         for e in events: 
             if e.event_type == "intrusion":
-                #print("event received")#debug
                 self.handle_intrusion(e,e.frame)
